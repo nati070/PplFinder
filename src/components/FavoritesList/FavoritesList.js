@@ -6,8 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import * as S from "./style";
 
-const UserList = ({ users, isLoading }) => {
-  const [hoveredUserId, setHoveredUserId] = useState();
+const FavoritesList = ({ users, isLoading }) => {
   const [choosenUsers, setChosenUsers] = useState([]);
   const [countries, setCountries] = useState({
     brazil: false,
@@ -66,42 +65,10 @@ const UserList = ({ users, isLoading }) => {
     }
   };
 
-  const handleMouseEnter = (index) => {
-    setHoveredUserId(index);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredUserId();
-  };
-
-  const clickOnFaforite = (user,index) => {
-    if (localStorage["usersFavor"]) {
-      const data = JSON.parse(localStorage["usersFavor"]);
-      let isUserExist = data.findIndex(
-        (userFavor) => userFavor.login.username === user.login.username
-      );
-      if (isUserExist == -1) {
-        data.push(user);
-        localStorage["usersFavor"] = JSON.stringify(data);
-        setHoveredUserId(index)  
-      } else {
-        data.splice(isUserExist, 1);
-        localStorage["usersFavor"] = JSON.stringify(data);
-        setHoveredUserId()
-      }
-    } else {
-      const data = [];
-      data.push(user);
-      localStorage["usersFavor"] = JSON.stringify(data);
-    }
-  };
-
-  const isUserFavorite = (user) => {
-    if (localStorage["usersFavor"]) {
-      const data = JSON.parse(localStorage["usersFavor"]);
-      return data.some((userFavor) => user.login.username == userFavor.login.username);
-    }
-    return false;
+  const clickOnUnFaforite = (index) => {
+      users.splice(index,1);
+      localStorage["usersFavor"] = JSON.stringify(users);
+      setChosenUsers([...users]);
   };
 
   return (
@@ -143,8 +110,6 @@ const UserList = ({ users, isLoading }) => {
           return (
             <S.User
               key={index}
-              onMouseEnter={() => handleMouseEnter(index)}
-              onMouseLeave={handleMouseLeave}
             >
               <S.UserPicture src={user?.picture.large} alt="" />
               <S.UserInfo>
@@ -160,8 +125,8 @@ const UserList = ({ users, isLoading }) => {
                 </Text>
               </S.UserInfo>
               <S.IconButtonWrapper
-                isVisible={index === hoveredUserId || isUserFavorite(user)}
-                onClick={() => clickOnFaforite(user,index)}
+                isVisible={true}
+                onClick={() => clickOnUnFaforite(index)}
               >
                 <IconButton>
                   <FavoriteIcon color="error" />
@@ -180,4 +145,4 @@ const UserList = ({ users, isLoading }) => {
   );
 };
 
-export default UserList;
+export default FavoritesList;
